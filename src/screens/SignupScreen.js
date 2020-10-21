@@ -1,40 +1,31 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Text, Button, Input } from 'react-native-elements';
-import Spacer from '../components/Spacer';
+import { NavigationEvents, SafeAreaView } from 'react-navigation';
 import { Context as AuthContext } from '../context/AuthContext';
+import AuthForm from '../components/AuthForm';
+import NavLink from '../components/NavLink';
 
-const SignupScreen = ({ navigation }) => {
-    const { state, signup } = useContext(AuthContext);
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    console.log(state);
+const SignupScreen = () => {
+    const { state, signup, clearErrorMessage } = useContext(AuthContext);
+
+
     return (
-        <View style={styles.containerStyle}>
-            <Spacer>
-                <Text h3>SignUp for Tracker</Text>
-            </Spacer>
-            <Input
-                label="Email"
-                value={email}
-                onChangeText={setEmail}
-                autoCapitalize='none'
-                autoCorrect={false}
-            />
+        <SafeAreaView style={{ flex: 1 }} forceInset={{ top: 'always' }}>
 
-            <Input
-                secureTextEntry
-                label="Password"
-                value={password}
-                onChangeText={setPassword}
-                autoCapitalize='none'
-                autoCorrect={false}
-            />
-            {state.errorMessage ? <Text style={styles.errorMessageStyle}>{state.errorMessage}</Text> : null}
-            <Spacer>
-                <Button title="SignUp" onPress={() => signup({ email, password })} />
-            </Spacer>
-        </View>
+            <View style={styles.containerStyle}>
+                <NavigationEvents onWillFocus={clearErrorMessage} />
+                <AuthForm
+                    headerText='SignUp for Tracker'
+                    errorMessage={state.errorMessage}
+                    submitButtonText="Sign Up"
+                    onSubmit={signup}
+                />
+                <NavLink
+                    routName='Signin'
+                    text='Already have an account? Sign In instead'
+                />
+            </View>
+        </SafeAreaView>
     );
 };
 
@@ -49,12 +40,6 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         marginBottom: 150
-    },
-    errorMessageStyle: {
-        color: 'red',
-        fontSize: 16,
-        marginLeft: 10,
-        marginBottom: 15
     }
 });
 
